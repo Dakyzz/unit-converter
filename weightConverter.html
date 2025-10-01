@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    form {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 25px;
+        height: fit-content;
+        width: fit-content;
+        gap: 5%;
+        display: grid;
+        font-family: sans-serif;
+
+    }
+    div{
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 10px;
+    }
+    input,
+    select,
+    button {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 5px;
+    }
+
+    button {
+        color: white;
+        background-color: #222;
+    }
+
+    button:hover {
+        transition: .5s;
+        background-color: #444;
+    }
+</style>
+
+<body>
+    <form action="">
+        <div>
+         <a href="temperatureConverter.html">
+            <button type="button">temp Converter</button>
+        </a>
+        <a href="lengthConverter.html">
+            <button type="button">length Converter</button>
+        </a>
+        </div>
+        <label for="">Enter Length to convert
+            <input type="text" id="input-number">
+        </label>
+        <label for="">Unit to convert from
+            <select name="" id="from-unit">
+                <option value="g">grams</option>
+                <option value="kg">kilograms</option>
+                <option value="mg">milligrams</option>
+                <option value="lb">pounds</option>
+                <option value="oz">ounces</option>
+                <option value="ton">tons</option>
+            </select>
+        </label>
+        <label for="">Unit to convert to
+            <select name="" id="to-unit">
+                <option value="g">grams</option>
+                <option value="kg">kilograms</option>
+                <option value="mg">milligrams</option>
+                <option value="lb">pounds</option>
+                <option value="oz">ounces</option>
+                <option value="ton">tons</option>
+            </select>
+        </label>
+        <button id="submit">submit</button>
+        <p id="result"></p>
+    </form>
+</body>
+
+</html>
+<script>
+    let result = document.getElementById('result');
+    let submittedForm = document.querySelector('form');
+
+    submittedForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const inputValue = parseFloat(document.getElementById('input-number').value);
+        const fromUnit = document.getElementById('from-unit').value;
+        const toUnit = document.getElementById('to-unit').value;
+        if (isNaN(inputValue)) {
+            result.innerText = 'please enter a valid number';
+            return;
+        }
+        fetch('http://localhost:3000/convert-weight', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    value: inputValue,
+                    from: fromUnit,
+                    to: toUnit
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                result.innerText = `Converted ${data.convertedValue.toFixed(4)} ${toUnit}`
+            })
+            .catch(e => {
+                result.innerText = "Error: ", e.message;
+            })
+    })
+</script>
